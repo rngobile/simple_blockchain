@@ -1,10 +1,40 @@
 #!/usr/bin/python3
 
+import hashlib
+import json
+from time import time
+
 class Blockchain(object):
     def __init__(self):
         self.chain = []
         self.current_transactions = []
+
+        # Create the genesis block
+        self.new_block(pervious_hash=1, proof=100)
     
+    def new_block(self, proof, prevouse_hash=None):
+        """
+        Create a new block in the Blockchain
+
+        :param proof: <int> the proof given by the proof of Work algorithm
+        :param previous_hash: (Optional) <str> Hash of previous Block
+        :return: <dict> New Block
+        """
+
+        block = {
+            'index': len(self.chain)+1,
+            'timestamp': time(),
+            'transactions': self.current_transactions,
+            'proof': proof,
+            'previous_hash': prevouse_hashor self.hash(self.chain[-1]),
+        }
+
+        # Reset the current list of transactions
+        self.current_transactions = []
+
+        self.chain.append(block)
+        return block
+
     def new_block(self):
         # Creates a new block and adds it to the chain
         pass
@@ -32,12 +62,21 @@ class Blockchain(object):
     
     @staticmethod
     def hash(block):
-        # Hashes a Block
-        pass
+        """ 
+        Create a SHA-256 hash of a Block
+
+        :param block: <dict> Block
+        :return: <str>
+        """
+
+        # We must make sure that the Dictionary is Ordered, or we'll have inconsistent hashes
+        block_string = json.dumps(block,sort_keys=True).encode()
+        return hashlib.sha256(block_string).hexdigest()
     
     @property
     def last_block(self):
         # Returns the last Block in the chain
-        pass
+        return self.chain[-1]
+
 
 
