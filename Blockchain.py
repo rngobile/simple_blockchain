@@ -33,7 +33,7 @@ class Blockchain(object):
             'timestamp': time(),
             'transactions': self.current_transactions,
             'proof': proof,
-            'previous_hash': prevouse_hashor self.hash(self.chain[-1]),
+            'previous_hash': previous_hash or self.hash(self.chain[-1]),
         }
 
         # Reset the current list of transactions
@@ -58,7 +58,6 @@ class Blockchain(object):
         :param amount: <int> Amount
         :return <int> The index of the block that will hold this transaction
         """
-
         self.current_transactions.append({
             'sender': sender,
             'recipient': recipient,
@@ -66,6 +65,11 @@ class Blockchain(object):
         })
 
         return self.last_block['index'] + 1
+
+    @property
+    def last_block(self):
+        # Returns the last Block in the chain
+        return self.chain[-1]
 
     @staticmethod
     def hash(block):
@@ -79,11 +83,6 @@ class Blockchain(object):
         # We must make sure that the Dictionary is Ordered, or we'll have inconsistent hashes
         block_string = json.dumps(block,sort_keys=True).encode()
         return hashlib.sha256(block_string).hexdigest()
-
-    @property
-    def last_block(self):
-        # Returns the last Block in the chain
-        return self.chain[-1]
 
     def proof_of_work(self, last_proof):
         """
